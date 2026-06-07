@@ -7,19 +7,17 @@ function App() {
 
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
+        <p>Myntra Clone</p>
         <a
           className="App-link"
-          href="https://reactjs.org"
+          href="https://myntra.com"
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn React
+          Myntra Official Website
         </a>
       </header>
-      
+
     </div>
   );
 }
