@@ -1,6 +1,7 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { Box, Grid, Typography } from '@mui/material';
+import axios from "axios";
 
 const GENZComp = ({activeMenu,setActiveMenu,}) => {
 
@@ -31,6 +32,64 @@ const GENZComp = ({activeMenu,setActiveMenu,}) => {
         }
 
     }
+
+        const callforHeadersGenZList = async () => {
+
+         try {
+            console.log("API Calling...");
+
+            const response = await axios.post("http://localhost:8000/api/Heading/MyntraHeadingCategoriesListApi",{
+                "MEASURE" : "GET_GENZ_DETAILS_FROM_HEADER"
+            })
+            return response;
+            
+        } catch(error) {
+            console.log("ERROR:", error);
+        }
+
+
+    }
+
+    useEffect(() => {
+
+      setGenZWomenWesternWear([]);
+      setGenZWomenEthnicWear([]);
+      setGenZLingerieLoungewear([]);
+      setGenZMenCasualWear([]);
+      setGenZMenOccassionWear([]); 
+      setGenZWomenFootwear([]);
+      setGenZMenFootwear([]);
+      setGenZBeautyGrooming([]);
+      setGenZAccessories([]);
+
+
+        callforHeadersGenZList()
+        .then((data) => {
+
+            if(data == null){
+
+            }else{
+
+                //data = JSON.parse(data);
+                console.log("GenZ Category List : ",data?.data);
+                data = data?.data?.Data;
+                console.log("GenZ Category List : ",data);
+
+                setGenZWomenWesternWear(data?.[0]?.["Women_Western_Wear"]);
+                setGenZWomenEthnicWear(data?.[0]?.["Women_Ethnic_Wear"]);
+                setGenZLingerieLoungewear(data?.[0]?.["Lingerie_Loungewear"]);
+                setGenZMenCasualWear(data?.[0]?.["Men_Casual_Wear"]);
+                setGenZMenOccassionWear(data?.[0]?.["Men_Occassion_Wear"]); 
+                setGenZWomenFootwear(data?.[0]?.["Women_Footwear"]);
+                setGenZMenFootwear(data?.[0]?.["Men_Footwear"]);
+                setGenZBeautyGrooming(data?.[0]?.["Beauty_Grooming"]);
+                setGenZAccessories(data?.[0]?.["Accessories"]);
+
+            }
+
+        })
+
+    },[]);
 
   return (
       <Box

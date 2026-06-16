@@ -1,6 +1,7 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { Box, Grid, Typography } from '@mui/material';
+import axios from "axios";
 
 const HOMEComp = ({activeMenu,setActiveMenu,}) => {
 
@@ -33,6 +34,69 @@ const HOMEComp = ({activeMenu,setActiveMenu,}) => {
         }
 
     }
+
+    const callforHeadersHomeList = async () => {
+
+         try {
+            console.log("API Calling...");
+
+            const response = await axios.post("http://localhost:8000/api/Heading/MyntraHeadingCategoriesListApi",{
+                "MEASURE" : "GET_HOME_DETAILS_FROM_HEADER"
+            })
+            return response;
+            
+        } catch(error) {
+            console.log("ERROR:", error);
+        }
+
+
+    }
+
+    useEffect(() => {
+
+        
+      setHomeBedLinenFurnishing([]);
+      setHomeFlooring([]);
+      setHomeBath([]);
+      setHomeLampsLighting([]);
+      setHomeHomeDécor([]); 
+      setHomeCushionsCushionCovers([]);
+      setHomeCurtains([]);
+      setHomeFurniture([]);
+      setHomeHomeGiftSets([]);
+      setHomeKitchenTable([]);
+      setHomeStorage([]);
+
+
+        callforHeadersHomeList()
+        .then((data) => {
+
+            if(data == null){
+
+            }else{
+
+                //data = JSON.parse(data);
+                console.log("Home Category List : ",data?.data);
+                data = data?.data?.Data;
+                console.log("Home Category List : ",data);
+
+                setHomeBedLinenFurnishing(data?.[0]?.["Bed_Linen_Furnishing"]);
+                setHomeFlooring(data?.[0]?.["Flooring"]);
+                setHomeBath(data?.[0]?.["Bath"]);
+                setHomeLampsLighting(data?.[0]?.["Lamps_Lighting"]);
+                setHomeHomeDécor(data?.[0]?.["Home_Décor"]); 
+                setHomeCushionsCushionCovers(data?.[0]?.["Cushions_Cushion_Covers"]);
+                setHomeCurtains(data?.[0]?.["Curtains"]);
+                setHomeFurniture(data?.[0]?.["Furniture"]);
+                setHomeHomeGiftSets(data?.[0]?.["Home_Gift_Sets"]);
+                setHomeKitchenTable(data?.[0]?.["Kitchen_Table"]);
+                setHomeStorage(data?.[0]?.["Storage"]);
+
+            }
+
+        })
+
+    },[]);
 
   return (
       <Box

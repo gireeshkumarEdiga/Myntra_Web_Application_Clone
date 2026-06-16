@@ -1,6 +1,7 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { Box, Grid, Typography } from '@mui/material';
+import axios from "axios";
 
 const WOMENComp = ({activeMenu,setActiveMenu,}) => {
 
@@ -39,6 +40,77 @@ const WOMENComp = ({activeMenu,setActiveMenu,}) => {
         }
 
     }
+
+    const callforHeadersWoMenList = async () => {
+
+         try {
+            console.log("API Calling...");
+
+            const response = await axios.post("http://localhost:8000/api/Heading/MyntraHeadingCategoriesListApi",{
+                "MEASURE" : "GET_WOMENS_DETAILS_FROM_HEADER"
+            })
+            return response;
+            
+        } catch(error) {
+            console.log("ERROR:", error);
+        }
+
+
+    }
+
+    useEffect(() => {
+
+        setWomenIndianFusionWear([]);
+        setWomenBeltsScarves([]);
+        setWomenWatchesWearables([]);
+        setWomenWesternWear([]);
+        setWomenPlusSize([]); 
+        setWomenMaternity([]);
+        setWomeSunglassesFrames([]);
+        setWomenFootwear([]);
+        setWomenSportsActiveWear([]);
+        setWomenLingerieSleepwear([]);
+        setWomenBeautyPersonalCare([]);
+        setWomenGadgets([]);
+        setWomenJewellery([]);
+        setWomenBackpacks([]);
+        setWomenHandbagsBagsWallets([]);
+        setWomenLuggagesTrolleys([]);
+
+        callforHeadersWoMenList()
+        .then((data) => {
+
+            if(data == null){
+
+            }else{
+
+                //data = JSON.parse(data);
+                console.log("WoMen Category List : ",data?.data);
+                data = data?.data?.Data;
+                console.log("WoMen Category List : ",data);
+
+                setWomenIndianFusionWear(data?.[0]?.["Indian_Fusion_Wear"]);
+                setWomenBeltsScarves(data?.[0]?.["Belts_Scarves_More"]);
+                setWomenWatchesWearables(data?.[0]?.["Watches_Wearables"]);
+                setWomenWesternWear(data?.[0]?.["Western_Wear"]);
+                setWomenPlusSize(data?.[0]?.["Plus_Size"]); 
+                setWomenMaternity(data?.[0]?.["Maternity"]);
+                setWomeSunglassesFrames(data?.[0]?.["Sunglasses_Frames"]);
+                setWomenFootwear(data?.[0]?.["Footwear"]);
+                setWomenSportsActiveWear(data?.[0]?.["Sports_Active_Wear"]);
+                setWomenLingerieSleepwear(data?.[0]?.["Lingerie_Sleepwear"]);
+                setWomenBeautyPersonalCare(data?.[0]?.["Beauty_Personal_Care"]);
+                setWomenGadgets(data?.[0]?.["Gadgets"]);
+                setWomenJewellery(data?.[0]?.["Jewellery"]);
+                setWomenBackpacks(data?.[0]?.["Backpacks"]);
+                setWomenHandbagsBagsWallets(data?.[0]?.["Handbags_Bags_Wallets"]);
+                setWomenLuggagesTrolleys(data?.[0]?.["Luggages_Trolleys"]);
+
+            }
+
+        })
+
+    },[]);
 
   return (
       <Box

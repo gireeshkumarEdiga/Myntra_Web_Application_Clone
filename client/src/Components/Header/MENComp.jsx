@@ -1,6 +1,7 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { Box, Grid, Typography } from '@mui/material';
+import axios from "axios";
 
 const MENComp = ({activeMenu,setActiveMenu,}) => {
 
@@ -36,6 +37,73 @@ const MENComp = ({activeMenu,setActiveMenu,}) => {
         }
 
     }
+
+    const callforHeadersMenList = async () => {
+
+         try {
+            console.log("API Calling...");
+
+            const response = await axios.post("http://localhost:8000/api/Heading/MyntraHeadingCategoriesListApi",{
+                "MEASURE" : "GET_MENS_DETAILS_FROM_HEADER"
+            })
+            return response;
+            
+        } catch(error) {
+            console.log("ERROR:", error);
+        }
+
+
+    }
+
+    useEffect(() => {
+
+        setMenTopWear([]);
+        setMenIndianFestivalWear([]);
+        setMenBottomWear([]);
+        setMenInnerSleeperWear([]);
+        setMenPlusSize([]); 
+        setMenFootWear([]);
+        setPersonalCareGrooming([]);
+        setMenSunGlassesFrames([]);
+        setMenWatches([]);
+        setMenSportsActiveWear([]);
+        setMenGadgets([]);
+        setMenFashionAccessories([]);
+        setMenBagsBackpacks([]);
+        setMenLuggagesTrolleys([]);
+
+        callforHeadersMenList()
+        .then((data) => {
+
+            if(data == null){
+
+            }else{
+
+                //data = JSON.parse(data);
+                console.log("Men Category List : ",data?.data);
+                data = data?.data?.Data;
+                console.log("Men Category List : ",data);
+
+                setMenTopWear(data?.[0]?.["Topwear"]);
+                setMenIndianFestivalWear(data?.[0]?.["Indian_Festive_Wear"]);
+                setMenBottomWear(data?.[0]?.["Bottomwear"]);
+                setMenInnerSleeperWear(data?.[0]?.["Innerwear_Sleepwear"]);
+                setMenPlusSize(data?.[0]?.["Plus_Size"]); 
+                setMenFootWear(data?.[0]?.["Footwear"]);
+                setPersonalCareGrooming(data?.[0]?.["Personal_Care_Grooming"]);
+                setMenSunGlassesFrames(data?.[0]?.["Sunglasses_Frames"]);
+                setMenWatches(data?.[0]?.["Watches"]);
+                setMenSportsActiveWear(data?.[0]?.["Sports_Active_Wear"]);
+                setMenGadgets(data?.[0]?.["Gadgets"]);
+                setMenFashionAccessories(data?.[0]?.["Fashion_Accessories"]);
+                setMenBagsBackpacks(data?.[0]?.["Bags_Backpacks"]);
+                setMenLuggagesTrolleys(data?.[0]?.["Luggages_Trolleys"]);
+
+            }
+
+        })
+
+    },[]);
 
   return (
       <Box

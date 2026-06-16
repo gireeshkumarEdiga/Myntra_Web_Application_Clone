@@ -1,6 +1,7 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { Box, Grid, Typography } from '@mui/material';
+import axios from "axios";
 
 const KIDSComp = ({activeMenu,setActiveMenu,}) => {
 
@@ -32,6 +33,65 @@ const KIDSComp = ({activeMenu,setActiveMenu,}) => {
         }
 
     }
+
+    const callforHeadersKidsList = async () => {
+
+         try {
+            console.log("API Calling...");
+
+            const response = await axios.post("http://localhost:8000/api/Heading/MyntraHeadingCategoriesListApi",{
+                "MEASURE" : "GET_KIDS_DETAILS_FROM_HEADER"
+            })
+            return response;
+            
+        } catch(error) {
+            console.log("ERROR:", error);
+        }
+
+
+    }
+
+    useEffect(() => {
+
+
+        setKidsBoysClothing([]);
+        setKidsGirlsClothing([]);
+        setKidsFootwear([]);
+        setKidsToysGames([]);
+        setKidsInfants([]); 
+        setKidsHomeBath([]);
+        setKidsPersonalCare([]);
+        setKidsKidsAccessories([]);
+        setKidsBrands([]);
+
+
+        callforHeadersKidsList()
+        .then((data) => {
+
+            if(data == null){
+
+            }else{
+
+                //data = JSON.parse(data);
+                console.log("KIDS Category List : ",data?.data);
+                data = data?.data?.Data;
+                console.log("KIDS Category List : ",data);
+
+                setKidsBoysClothing(data?.[0]?.["Boys_Clothing"]);
+                setKidsGirlsClothing(data?.[0]?.["Girls_Clothing"]);
+                setKidsFootwear(data?.[0]?.["Footwear"]);
+                setKidsToysGames(data?.[0]?.["Toys_Games"]);
+                setKidsInfants(data?.[0]?.["Infants"]); 
+                setKidsHomeBath(data?.[0]?.["Home_Bath"]);
+                setKidsPersonalCare(data?.[0]?.["Personal_Care"]);
+                setKidsKidsAccessories(data?.[0]?.["Kids_Accessories"]);
+                setKidsBrands(data?.[0]?.["Brands"]);
+
+            }
+
+        })
+
+    },[]);
 
   return (
       <Box
