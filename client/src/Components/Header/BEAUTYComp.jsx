@@ -1,6 +1,7 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
 import { Box, Grid, Typography } from '@mui/material';
+import axios from "axios";
 
 const BEAUTYComp = ({activeMenu,setActiveMenu,}) => {
 
@@ -34,6 +35,71 @@ const BEAUTYComp = ({activeMenu,setActiveMenu,}) => {
         }
 
     }
+
+        const callforHeadersHomeList = async () => {
+
+         try {
+            console.log("API Calling...");
+
+            const response = await axios.post("http://localhost:8000/api/Heading/MyntraHeadingCategoriesListApi",{
+                "MEASURE" : "GET_BEAUTY_DETAILS_FROM_HEADER"
+            })
+            return response;
+            
+        } catch(error) {
+            console.log("ERROR:", error);
+        }
+
+
+    }
+
+    useEffect(() => {
+
+    
+      setBeautyMakeup([]);
+      setBeautySkincareBathBody([]);
+      setBeautyBabyCare([]);
+      setBeautyMasks([]);
+      setBeautyHaircare([]); 
+      setBeautyFragrances([]);
+      setBeautyAppliances([]);
+      setBeautyMenGrooming([]);
+      setBeautyBeautyGiftMakeupSet([]);
+      setBeautyPremiumBeauty([]);
+      setBeautyWellnessHygiene([]);
+      setBeautyTopBrands([]);
+
+
+        callforHeadersHomeList()
+        .then((data) => {
+
+            if(data == null){
+
+            }else{
+
+                //data = JSON.parse(data);
+                console.log("Beauty Category List : ",data?.data);
+                data = data?.data?.Data;
+                console.log("Beauty Category List : ",data);
+
+                setBeautyMakeup(data?.[0]?.["Makeup"]);
+                setBeautySkincareBathBody(data?.[0]?.["Skincare_Bath_Body"]);
+                setBeautyBabyCare(data?.[0]?.["Baby_Care"]);
+                setBeautyMasks(data?.[0]?.["Masks"]);
+                setBeautyHaircare(data?.[0]?.["Haircare"]); 
+                setBeautyFragrances(data?.[0]?.["Fragrances"]);
+                setBeautyAppliances(data?.[0]?.["Appliances"]);
+                setBeautyMenGrooming(data?.[0]?.["Men_Grooming"]);
+                setBeautyBeautyGiftMakeupSet(data?.[0]?.["Beauty_Gift_Makeup_Set"]);
+                setBeautyPremiumBeauty(data?.[0]?.["Premium_Beauty"]);
+                setBeautyWellnessHygiene(data?.[0]?.["Wellness_Hygiene"])
+                setBeautyTopBrands(data?.[0]?.["Top_Brands"]);
+
+            }
+
+        })
+
+    },[]);
 
   return (
       <Box
