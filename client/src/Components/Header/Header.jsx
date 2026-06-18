@@ -18,9 +18,11 @@ import KIDSComp from "./KIDSComp";
 import HOMEComp from "./HOMEComp";
 import BEAUTYComp from "./BEAUTYComp";
 import GENZComp from "./GENZComp";
+import { Link, useNavigate } from "react-router-dom";
 
 const Header = () => {
 
+    const navigate = useNavigate()
     const [activeMenu, setActiveMenu] = useState("");
 
     const colorCode = (name) => {
@@ -39,6 +41,12 @@ const Header = () => {
             return "#0db7af"
         }
 
+    }
+
+    const loginSignupHandler = () => {
+        console.log("clicked");
+         setActiveMenu(""); 
+         navigate("/login");
     }
 
   return (
@@ -67,11 +75,13 @@ const Header = () => {
                     position: "relative"
                 }}
                 >
-                <img
+                <Link to="/" style={{textDecoration:"none"}} >
+                    <img
                     src="https://cdn.iconscout.com/icon/free/png-256/free-myntra-2709168-2249158.png"
                     alt="logo"
                     width={50}
-                />
+                    />
+                </Link>
 
                 {["MEN","WOMEN","KIDS","HOME","BEAUTY","GENZ"].map((menu) => (
                     <Box
@@ -144,11 +154,13 @@ const Header = () => {
                 {/* RIGHT */}
 
                 <Box sx={{ display: "flex", gap: 4 }}>
-                    <Box textAlign="center">
+
+                    <Box textAlign="center"
+                            onMouseEnter={() => setActiveMenu("Profile")}
+                            //onMouseLeave={() => setActiveMenu("")}
+                    >
                         <Box
                             sx={{cursor:"pointer"}}
-                            onMouseLeave={() => setActiveMenu("")}
-                            onMouseEnter={() => setActiveMenu("Profile")}
                         >
                             <PersonIcon />
                             <Typography fontSize={12}>
@@ -193,6 +205,7 @@ const Header = () => {
 
                                         <Button
                                         variant="outlined"
+                                        onClick={loginSignupHandler}
                                         sx={{
                                             mt: 1,
                                             fontSize: "12px",
@@ -205,8 +218,9 @@ const Header = () => {
                                             background: "#fff"
                                             }
                                         }}
+                                    
                                         >
-                                        LOGIN / SIGNUP
+                                            LOGIN / SIGNUP
                                         </Button>
 
                                         <Divider sx={{ my: 0.5 }} />
@@ -298,23 +312,28 @@ const Header = () => {
 
                             </Box>}
                         </Box>
-
                     </Box>
 
-                <Box textAlign="center">
-                    <FavoriteBorderIcon />
-                    <Typography fontSize={12}>
-                    Wishlist
-                    </Typography>
+                    <Box textAlign="center"
+                        onMouseEnter={() => setActiveMenu("")}
+                    >
+                        <FavoriteBorderIcon />
+                        <Typography fontSize={12}>
+                        Wishlist
+                        </Typography>
+                    </Box>
+
+                    <Box textAlign="center"
+                        onMouseEnter={() => setActiveMenu("")}
+                        >
+                        <ShoppingBagOutlinedIcon />
+                        <Typography fontSize={12}>
+                        Bag
+                        </Typography>
+                    </Box>
+
                 </Box>
 
-                <Box textAlign="center">
-                    <ShoppingBagOutlinedIcon />
-                    <Typography fontSize={12}>
-                    Bag
-                    </Typography>
-                </Box>
-                </Box>
             </Toolbar>
         </AppBar>
   );

@@ -98,9 +98,8 @@ const Footer = () => {
       component="footer"
       sx={{
         backgroundColor: "#fafbfc",
-        width: "100%",
         py: 6,
-        px:10,
+        px:5,
         textAlign: "start",
         borderTop: "1px solid #eaeaec",
       }}
