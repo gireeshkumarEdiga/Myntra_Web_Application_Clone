@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   AppBar,
   Toolbar,
   Box,
   Typography,
   Divider,
-  Button
+  Button,
+  Snackbar, 
+  Alert,
 } from "@mui/material";
 
 import SearchIcon from "@mui/icons-material/Search";
@@ -19,11 +21,14 @@ import HOMEComp from "./HOMEComp";
 import BEAUTYComp from "./BEAUTYComp";
 import GENZComp from "./GENZComp";
 import { Link, useNavigate } from "react-router-dom";
+import { connect } from "react-redux";
+import { authTokenAction, userDetailsAction } from "../Redux/Action";
 
-const Header = () => {
+const Header = ({AUTH_TOKEN,USER_DETAILS,storeTokenfromLogin,userDetailsfromLogin}) => {
 
     const navigate = useNavigate()
     const [activeMenu, setActiveMenu] = useState("");
+    const [logoutStatus, setLogoutStatus] = useState(false);
 
     const colorCode = (name) => {
 
@@ -48,6 +53,46 @@ const Header = () => {
          setActiveMenu(""); 
          navigate("/login");
     }
+
+    const logoutHandler = () => {
+
+        setLogoutStatus(true);
+
+        setTimeout(() => {
+            storeTokenfromLogin("");
+            userDetailsfromLogin({});
+            setActiveMenu("");
+            navigate("/");
+            setLogoutStatus(false);
+        },2000);
+
+    }
+
+    const handleLogoutClose = () => {
+        setLogoutStatus(false);
+    }
+
+    const listHandler = (name) => {
+
+        console.log("clicked : ",name)
+
+        if(name === "Saved Addresses"){
+            navigate("/address")
+        }
+
+    }
+
+    const callforCartPageHandler = () => {
+        navigate("/cart")
+    }
+
+      useEffect(() => {
+        console.log("AUTH_TOKEN : ",AUTH_TOKEN);
+      },[AUTH_TOKEN])
+    
+      useEffect(() => {
+        console.log("USER_DETAILS : ",USER_DETAILS);
+      },[USER_DETAILS])
 
   return (
         <AppBar
@@ -182,7 +227,50 @@ const Header = () => {
                                     }}
                                     >
 
-                                    {/* Welcome Section */}
+                                    {AUTH_TOKEN === "" && 
+                                        <Box sx={{ px: 3, py : 1 }}>
+                                            <Typography
+                                            sx={{
+                                                fontWeight: 700,
+                                                fontSize: "16px"
+                                            }}
+                                            >
+                                            Welcome
+                                            </Typography>
+
+                                            <Typography
+                                            sx={{
+                                                color: "#696b79",
+                                                fontSize: "14px",
+                                                mt: 0.5
+                                            }}
+                                            >
+                                            To access account and manage orders
+                                            </Typography>
+
+                                            <Button
+                                            variant="outlined"
+                                            onClick={loginSignupHandler}
+                                            sx={{
+                                                mt: 1,
+                                                fontSize: "12px",
+                                                color: "#ff3f6c",
+                                                borderColor: "#d4d5d9",
+                                                fontWeight: 700,
+                                                width: "140px",
+                                                "&:hover": {
+                                                borderColor: "#ff3f6c",
+                                                background: "#fff"
+                                                }
+                                            }}
+                                        
+                                            >
+                                                LOGIN / SIGNUP
+                                            </Button>
+                                        </Box> 
+                                    }
+
+                                    {AUTH_TOKEN !== "" && 
                                     <Box sx={{ px: 3, py : 1 }}>
                                         <Typography
                                         sx={{
@@ -190,7 +278,7 @@ const Header = () => {
                                             fontSize: "16px"
                                         }}
                                         >
-                                        Welcome
+                                        Hello {USER_DETAILS?.firstName}
                                         </Typography>
 
                                         <Typography
@@ -200,28 +288,31 @@ const Header = () => {
                                             mt: 0.5
                                         }}
                                         >
-                                        To access account and manage orders
+                                        {USER_DETAILS?.mobile}
                                         </Typography>
+                                            <Button
+                                            variant="outlined"
+                                            onClick={logoutHandler}
+                                            sx={{
+                                                mt: 1,
+                                                fontSize: "12px",
+                                                color: "#ff3f6c",
+                                                borderColor: "#d4d5d9",
+                                                fontWeight: 700,
+                                                width: "140px",
+                                                "&:hover": {
+                                                borderColor: "#ff3f6c",
+                                                background: "#fff"
+                                                }
+                                            }}
+                                        
+                                            >
+                                                Logout
+                                            </Button>
+                                    </Box> }
 
-                                        <Button
-                                        variant="outlined"
-                                        onClick={loginSignupHandler}
-                                        sx={{
-                                            mt: 1,
-                                            fontSize: "12px",
-                                            color: "#ff3f6c",
-                                            borderColor: "#d4d5d9",
-                                            fontWeight: 700,
-                                            width: "140px",
-                                            "&:hover": {
-                                            borderColor: "#ff3f6c",
-                                            background: "#fff"
-                                            }
-                                        }}
-                                    
-                                        >
-                                            LOGIN / SIGNUP
-                                        </Button>
+                                    <Box sx={{ px: 3, py : 1 }}>
+
 
                                         <Divider sx={{ my: 0.5 }} />
 
@@ -302,10 +393,12 @@ const Header = () => {
                                                 fontWeight: 600
                                             }
                                             }}
+                                            onClick={() => listHandler(item)}
                                         >
                                             {item}
                                         </Typography>
                                         ))}
+
                                     </Box>
 
                                 </Box>
@@ -316,6 +409,8 @@ const Header = () => {
 
                     <Box textAlign="center"
                         onMouseEnter={() => setActiveMenu("")}
+                        sx={{cursor:"pointer"}}
+                        onClick={callforCartPageHandler}
                     >
                         <FavoriteBorderIcon />
                         <Typography fontSize={12}>
@@ -335,8 +430,45 @@ const Header = () => {
                 </Box>
 
             </Toolbar>
+
+            <Snackbar
+                open={logoutStatus}
+                autoHideDuration={3000} // Closes automatically after 3 seconds
+                onClose={handleLogoutClose}
+                anchorOrigin={{ vertical: "top", horizontal: "center" }} // Positions it top-center
+            >
+                <Alert 
+                onClose={handleLogoutClose} 
+                severity="success" 
+                variant="filled" 
+                sx={{ 
+                    width: "100%", 
+                    fontWeight: 600,
+                    backgroundColor: "#4caf50", // Flat clean green alert background
+                    fontSize: "14px",
+                    boxShadow: "0px 4px 12px rgba(0,0,0,0.15)"
+                }}
+                >
+                Logout Successfully!
+                </Alert>
+            </Snackbar>
+
         </AppBar>
   );
 };
 
-export default Header;
+const mapStateToProps = (state) => {
+    return {
+        AUTH_TOKEN : state.TOKEN.TOKEN,
+        USER_DETAILS : state.USERDETAILS.USERDETAILS
+    }
+}
+
+const mapDispatchToProps = (dispatch) => ({
+
+    storeTokenfromLogin : (data) => dispatch(authTokenAction(data)),
+    userDetailsfromLogin : (data) => dispatch(userDetailsAction(data)),
+
+});
+
+export default connect(mapStateToProps,mapDispatchToProps)(Header);

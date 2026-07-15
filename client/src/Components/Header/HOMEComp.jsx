@@ -41,7 +41,7 @@ const HOMEComp = ({activeMenu,setActiveMenu,}) => {
             console.log("API Calling...");
 
             const response = await axios.post("http://localhost:8000/api/Heading/MyntraHeadingCategoriesListApi",{
-                "MEASURE" : "GET_HOME_DETAILS_FROM_HEADER"
+                "MEASURE" : "GET_HOME_DETAILS_FROM_HEADER",
             })
             return response;
             
