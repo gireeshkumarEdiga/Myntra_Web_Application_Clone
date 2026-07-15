@@ -74,23 +74,35 @@ const AuthRoutesHandler = async (req,res) => {
             // console.log("isUsers : ",isUsers);
 
             // 1. check EMail is already there or Not
-            const isEmail = await Users.findOne({email : req.body.EMAIL});
-            console.log("isEmail : ",isEmail);
+            const isUser = await Users.findOne({email : req.body.EMAIL});
+            console.log("isUser : ",isUser);
 
             //2. check Password matching or not
-            const isMatch = await bcrypt.compare(req.body.PASSWORD,isEmail.password);
+            const isMatch = await bcrypt.compare(req.body.PASSWORD,isUser.password);
 
-            if(isEmail && isMatch ){
+            if(isUser && isMatch ){
+
+                const token = jwt.sign(
+                    {   
+                        userId :isUser._id
+                    },
+                    process.env.SECRETE_KEY,
+                    {
+                        expiresIn : "1d"
+                    }
+                );
 
                 res.send({
                     Message : 'User Logged In Successfully',
-                    Success : true
+                    Success : true,
+                    Token : token,
+                    User : isUser 
                 })
 
             }else{
 
                 res.send({
-                    Message : 'Email or Password wrong! Please Checj',
+                    Message : 'Email or Password wrong! Please Chech',
                     Success : false,
                 })
 

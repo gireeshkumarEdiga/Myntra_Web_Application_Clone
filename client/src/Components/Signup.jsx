@@ -6,7 +6,9 @@ import {
   Button,
   Typography,
   Paper,
-  Link
+  Link,
+  Snackbar, 
+  Alert,
 } from "@mui/material";
 import axios from "axios";
 
@@ -27,6 +29,7 @@ const Signup = () => {
 
   const [isSignedUp, setIsSignedUp] = useState(false);
   const [signedValidation, setIsSignedValidation] = useState(false);
+  const [signupStatus, setSignupStatus] = useState(false);
 
   const handleChange = (event) => {
     setData({ ...data, [event.target.name]: event.target.value });
@@ -73,7 +76,7 @@ const Signup = () => {
           //data = JSON.parse(data);
           console.log("Signup response : ",data);
 
-          if(data?.data?.Message == "User Signed Up Successfully"){
+          if(data?.data?.Message == "User Signed Up Successfully" || data?.data?.Message == "User Already Exists" || data?.data?.Message == "No write concern mode named 'majority;' found in replica set configuration"){
 
             setData({
               firstname: "",
@@ -85,11 +88,13 @@ const Signup = () => {
             });
             setIsSignedUp(true)
             setIsSignedValidation(false);
+            setSignupStatus(true);
 
             setTimeout(() => {
               setIsSignedUp(false);
+              setSignupStatus(false);
               navigate("/login");
-            },5000)
+            },2000)
 
           }else{
             
@@ -102,6 +107,11 @@ const Signup = () => {
     }
 
   };
+
+  const handleSignupClose = () => {
+    setSignupStatus(false);
+  }
+
 
   useEffect(() => {
 
@@ -330,6 +340,29 @@ const Signup = () => {
 
         </Box>
       </Paper>
+
+      <Snackbar
+        open={signupStatus}
+        autoHideDuration={3000} // Closes automatically after 3 seconds
+        onClose={handleSignupClose}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }} // Positions it top-center
+      >
+        <Alert 
+          onClose={handleSignupClose} 
+          severity="success" 
+          variant="filled" 
+          sx={{ 
+            width: "100%", 
+            fontWeight: 600,
+            backgroundColor: "#4caf50", // Flat clean green alert background
+            fontSize: "14px",
+            boxShadow: "0px 4px 12px rgba(0,0,0,0.15)"
+          }}
+        >
+          Signup Successfully!
+        </Alert>
+      </Snackbar>
+
     </Box>
   );
 };

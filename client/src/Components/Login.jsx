@@ -1,17 +1,20 @@
 import React, {useEffect, useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
-
+import { connect } from "react-redux";
+import { authTokenAction, userDetailsAction } from "./Redux/Action";
 import {
   Box,
   TextField,
   Button,
   Typography,
   Paper,
-  Link
+  Link,
+  Snackbar, 
+  Alert,
 } from "@mui/material";
 import axios from "axios";
 
-const Login = () => {
+const Login = ({storeTokenfromLogin, AUTH_TOKEN, userDetailsfromLogin,USER_DETAILS}) => {
 
   const navigate = useNavigate();
   const [data, setData] = useState({
@@ -23,6 +26,7 @@ const Login = () => {
 
   const [isLogggedIn,setIsLoggedIn] = useState(false);
   const [loggedValidation, setLoggedValidation] = useState(false);
+  const [loginStatus, setLoginStatus] = useState(false);
 
   const handleChange = (event) => {
     setData({ ...data, [event.target.name]: event.target.value });
@@ -54,7 +58,12 @@ const Login = () => {
           //data = JSON.parse(data);
           console.log("LoggedIn response : ",data);
 
-          if(data?.data?.Message == "User Logged In Successfully"){
+          if(data?.data?.Message === "User Logged In Successfully"){
+
+            console.log("Auth_Token : ",data?.data?.Token)
+
+            storeTokenfromLogin(data?.data?.Token);
+            userDetailsfromLogin(data?.data?.User);
 
             setData({
               email: "",
@@ -62,11 +71,13 @@ const Login = () => {
             });
             setIsLoggedIn(true);
             setLoggedValidation(false);
+            setLoginStatus(true);
 
             setTimeout(() => {
               setIsLoggedIn(false);
+              setLoginStatus(false);
               navigate("/")
-            },5000)
+            },2000)
 
           }else{
             
@@ -78,6 +89,10 @@ const Login = () => {
 
   };
 
+  const handleLoginClose = () => {
+    setLoginStatus(false);
+  }
+
   useEffect(() => {
 
     if(data.email !=="" && data?.password !== ""){
@@ -87,6 +102,14 @@ const Login = () => {
     }
 
   },[data])
+
+  useEffect(() => {
+    console.log("AUTH_TOKEN : ",AUTH_TOKEN);
+  },[AUTH_TOKEN])
+
+  useEffect(() => {
+    console.log("USER_DETAILS : ",USER_DETAILS);
+  },[USER_DETAILS])
 
   return (
     <Box
@@ -260,8 +283,45 @@ const Login = () => {
         </Box>
 
       </Paper>
+
+      <Snackbar
+        open={loginStatus}
+        autoHideDuration={3000} // Closes automatically after 3 seconds
+        onClose={handleLoginClose}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }} // Positions it top-center
+      >
+        <Alert 
+          onClose={handleLoginClose} 
+          severity="success" 
+          variant="filled" 
+          sx={{ 
+            width: "100%", 
+            fontWeight: 600,
+            backgroundColor: "#4caf50", // Flat clean green alert background
+            fontSize: "14px",
+            boxShadow: "0px 4px 12px rgba(0,0,0,0.15)"
+          }}
+        >
+          Login Successfully!
+        </Alert>
+      </Snackbar>
+
     </Box>
   );
 };
 
-export default Login;
+const mapStateToProps = (state) => {
+  return {
+    AUTH_TOKEN : state.TOKEN.TOKEN,
+    USER_DETAILS : state.USERDETAILS.USERDETAILS
+  }
+}
+
+const mapDispatchToProps = (dispatch) => ({
+
+  storeTokenfromLogin : (data) => dispatch(authTokenAction(data)),
+  userDetailsfromLogin : (data) => dispatch(userDetailsAction(data)),
+
+});
+
+export default connect(mapStateToProps,mapDispatchToProps)(Login);
