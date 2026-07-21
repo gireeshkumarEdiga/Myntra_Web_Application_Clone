@@ -5,6 +5,7 @@ const EthnicWear = require("../Model/EthnicWear");
 const ethnicWearRoutesHandler = async (req,res) => {
 
     const MEASURE = req.body.MEASURE;
+    const SORT = req.body.SORT;
 
     if(MEASURE == "CREATE_MULTIPLE_ETHNICWEARS"){
 
@@ -361,6 +362,7 @@ const ethnicWearRoutesHandler = async (req,res) => {
             ]
         );
 
+        
         const isEthnicWearList = await EthnicWear.find();
 
         if(isEthnicWearList){
@@ -380,7 +382,31 @@ const ethnicWearRoutesHandler = async (req,res) => {
 
     if(MEASURE == "GET_ETHNICWEARS_LIST"){
 
-        const isEthnicWearList = await EthnicWear.find();
+        if(SORT == "Select any One"){
+
+            var isEthnicWearList = await EthnicWear.find();
+
+        }else if(SORT == "Better Discount"){
+
+            var isEthnicWearList = await EthnicWear.find().sort({discount_percentage : -1});
+
+        }else if(SORT == "Price: High to Low"){
+
+            var isEthnicWearList = await EthnicWear.find().sort({ price_inr : -1 });
+
+        }else if(SORT == "Price: Low to High"){
+
+            var isEthnicWearList = await EthnicWear.find().sort({ price_inr : 1 });
+
+        }else if(SORT == "Customer Rating"){
+
+            var isEthnicWearList = await EthnicWear.find().sort({ rating : -1 });
+
+        }else{
+            
+            var isEthnicWearList = await EthnicWear.find();
+
+        }
 
         if(isEthnicWearList){
             res.send({

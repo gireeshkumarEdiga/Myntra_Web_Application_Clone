@@ -5,6 +5,7 @@ const MensWear = require("../Model/MensWear");
 const mensWearRoutesHandler = async (req,res) => {
 
     const MEASURE = req.body.MEASURE;
+    const SORT = req.body.SORT;
 
     if(MEASURE == "CREATE_MULTIPLE_MENSWEARS"){
 
@@ -402,8 +403,31 @@ const mensWearRoutesHandler = async (req,res) => {
 
     if(MEASURE == "GET_MENSWEARS_LIST"){
 
+        if(SORT == "Select any One"){
 
-        const isMensWearList = await MensWear.find();
+            var isMensWearList = await MensWear.find();
+
+        }else if(SORT == "Better Discount"){
+
+            var isMensWearList = await MensWear.find().sort({discount_percentage : -1});
+
+        }else if(SORT == "Price: High to Low"){
+
+            var isMensWearList = await MensWear.find().sort({ price_inr : -1 });
+
+        }else if(SORT == "Price: Low to High"){
+
+            var isMensWearList = await MensWear.find().sort({ price_inr : 1 });
+
+        }else if(SORT == "Customer Rating"){
+
+            var isMensWearList = await MensWear.find().sort({ rating : -1 });
+
+        }else{
+            
+            var isMensWearList = await MensWear.find();
+
+        }
 
         if(isMensWearList){
             res.send({
