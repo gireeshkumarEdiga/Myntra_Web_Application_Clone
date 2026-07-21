@@ -8,6 +8,8 @@ import StarIcon from '@mui/icons-material/Star';
 import { selectedItemsDetailsAction } from './Redux/Action';
 import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 import { useNavigate } from 'react-router-dom';
+import { Menu, MenuItem } from "@mui/material";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 
 const Products = ({selectedCategory,callforSelectedItemDetails,AUTH_TOKEN}) => {
 
@@ -16,13 +18,25 @@ const Products = ({selectedCategory,callforSelectedItemDetails,AUTH_TOKEN}) => {
     const [cartList, setCartList] = useState([]);
     const [cartStatus,setCartStatus] = useState(false);
 
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [selected, setSelected] = useState("Select any One");
+    const OPTIONS = [
+      "Select any One",
+      // "What's New",
+      // "Popularity",
+      "Better Discount",
+      "Price: High to Low",
+      "Price: Low to High",
+      "Customer Rating"
+    ];
 
-    const callforgetEthenicWearList = async (api,measure) => {
+    const callforgetProductList = async (api,measure) => {
 
       try{
 
         const response = await axios.post("http://localhost:8000/api/Category/"+api,{
           "MEASURE": measure,
+          "SORT" : selected
         },{
           headers : {
             Authorization : `Bearer ${AUTH_TOKEN}`
@@ -152,7 +166,7 @@ const Products = ({selectedCategory,callforSelectedItemDetails,AUTH_TOKEN}) => {
           measure = "GET_MENSWEARS_LIST";
         }
 
-        callforgetEthenicWearList(api,measure)
+        callforgetProductList(api,measure)
         .then((data) => {
 
           if(data == null){
@@ -168,7 +182,7 @@ const Products = ({selectedCategory,callforSelectedItemDetails,AUTH_TOKEN}) => {
 
   
 
-    },[selectedCategory])
+    },[selectedCategory,selected])
 
     const callforgetCartList = async (data) => {
 
@@ -222,8 +236,65 @@ const Products = ({selectedCategory,callforSelectedItemDetails,AUTH_TOKEN}) => {
           </Grid>
           <Grid item xl={10} lg={10} md={10} sm={2} xs={2} >
 
+            <Box sx={{ px:2, display : "flex", justifyContent:"end" }}>
+              {/* Trigger Button */}
+              <Box
+                onClick={(e) => setAnchorEl(e.currentTarget)}
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                  width: "250px",
+                  padding: "10px 16px",
+                  border: "1px solid #d4d5d9",
+                  cursor: "pointer",
+                  justifyContent: "space-between"
+                }}
+              >
+                <Typography sx={{ fontSize: "14px" }}>
+                  Sort by : <strong>{selected}</strong>
+                </Typography>
+                <KeyboardArrowDownIcon sx={{ color: "#94969f" }} />
+              </Box>
+
+              {/* Dropdown Menu */}
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={() => setAnchorEl(null)}
+                sx={{ "& .MuiPaper-root": { width: "250px", boxShadow: 3 } }}
+              >
+                {OPTIONS.map((option) => (
+                  <MenuItem
+                    key={option}
+                    onClick={() => {
+                      setSelected(option);
+                      setAnchorEl(null);
+                    }}
+                    sx={{
+                      fontSize: "14px",
+                      fontWeight: option === selected ? 700 : 400,
+                      py: 1
+                    }}
+                  >
+                    {option}
+                  </MenuItem>
+                ))}
+              </Menu>
+
+            </Box>
+
+          </Grid>
+      </Grid>
+
+        <Grid container >
+          <Grid item xl={2} lg={2} md={2} sm={2} xs={2} >
+
+          </Grid>
+          <Grid item xl={10} lg={10} md={10} sm={2} xs={2} >
+
             <Grid container sx={{my:3,mx:3,textAlign:"center"}} >
-              {productsList.map((product) => (
+              {productsList.length !==0 && productsList?.map((product) => (
                 <Grid item xs={12} sm={6} md={4} lg={3} xl={2} key={product._id}  >
                   <Box sx={{mx:2}}   >
                     <Card sx={{ maxWidth: '100%',minWidth: '100%', borderRadius: 0, boxShadow: 'none', position: 'relative', '&:hover': { boxShadow: '0 4px 12px rgba(0,0,0,0.1)' } }} 
